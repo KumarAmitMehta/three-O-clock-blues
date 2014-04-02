@@ -11,33 +11,18 @@
 
 MODULE_LICENSE("GPL v2");
 MODULE_AUTHOR("gmate.amit@gmail.com");
-MODULE_VERSION("1.0");
+MODULE_VERSION("1.1");
 MODULE_DESCRIPTION("Sample module on sysfs and kobject usage");
 /* Create kobject and use sysfs to export those objects */
-#define RWUSR (S_IRUSR|S_IWUSR)
-#define RWGRP (S_IRGRP|S_IWGRP)
-#define RWOTH (S_IROTH|S_IWOTH)
 
 /* Name of the directory entry in debugfs file system */
-#define SYSFS_NAME "sysfs-lkm"
-#define DRV_NAME "sysfs-lkm"
+#define SYSFS_NAME "eudyptula"
 
-static ssize_t id_show(struct kobject *kobj, struct kobj_attribute *attr,
-		char *buf);
-static ssize_t id_store(struct kobject *kobj, struct kobj_attribute *attr,
-		const char *buf, size_t count);
-static ssize_t jiffies_show(struct kobject *kobj, struct kobj_attribute *attr,
-		char *buf);
-static ssize_t foo_show(struct kobject *kobj, struct kobj_attribute *attr,
-		char *buf);
-static ssize_t foo_store(struct kobject *kobj, struct kobj_attribute *attr,
-	const char *buf, size_t count);
-
-/* sysfs sysfs-lkm/id file node read/write buffer */
-static const char text[] = "bitprolix";
+/* sysfs eudyptula/id file node read/write buffer */
+static const char text[] = "386c7b47d837";
 static int len = sizeof(text);
 
-/* sysfs sysfs-lkm/foo file node read/write buffer */
+/* sysfs eudyptula/foo file node read/write buffer */
 static char foo_kbuff[PAGE_SIZE];
 
 /* For foo sysfs file node read/write synchronization */
@@ -53,20 +38,11 @@ static ssize_t id_show(struct kobject *kobj, struct kobj_attribute *attr,
 static ssize_t id_store(struct kobject *kobj, struct kobj_attribute *attr,
 		const char *buf, size_t count)
 {
-	char *kbuff = kmalloc(len, GFP_KERNEL);
-	if (!kbuff) {
-		pr_debug("Failed to allocate memory\n");
-		return -ENOMEM;
-	}
-
-	sscanf(buf, "%s", kbuff);
-	if (memcmp(kbuff, text, len - 1) != 0) {
+	if (memcmp(buf, text, len - 1) != 0) {
 		pr_debug("Invalid value\n");
-		kfree(kbuff);
 		return -EINVAL;
 	}
 
-	kfree(kbuff);
 	return count;
 }
 
@@ -93,10 +69,9 @@ static ssize_t foo_show(struct kobject *kobj, struct kobj_attribute *attr,
 static ssize_t foo_store(struct kobject *kobj, struct kobj_attribute *attr,
 	const char *buf, size_t count)
 {
-	if (down_interruptible(&sem)) {
+	if (down_interruptible(&sem))
 		return -ERESTARTSYS;
-	}
-	
+
 	memcpy(foo_kbuff, buf, (strlen(buf)+1));
 	up(&sem);
 
@@ -104,7 +79,7 @@ static ssize_t foo_store(struct kobject *kobj, struct kobj_attribute *attr,
 }
 
 static struct kobj_attribute id_attribute =
-	__ATTR(id, RWUSR|RWGRP|RWOTH, id_show, id_store);
+	__ATTR(id, 0666, id_show, id_store);
 
 static struct kobj_attribute jiffies_attribute =
 	__ATTR_RO(jiffies);
@@ -127,23 +102,23 @@ static struct attribute_group attr_group = {
 	.attrs = attrs,
 };
 
-static struct kobject *sysfs-lkm_kobject;
+static struct kobject *eudyptula_kobject;
 
-static int __init sysfs-lkm_sysfs_init(void)
+static int __init eudyptula_sysfs_init(void)
 {
 	int ret;
 
-	pr_debug("%s: Init\n", DRV_NAME);
+	pr_debug("----Eudyptula task 09 challenge: START----\n");
 
-	sysfs-lkm_kobject = kobject_create_and_add(SYSFS_NAME, kernel_kobj);
-	if (!sysfs-lkm_kobject) {
+	eudyptula_kobject = kobject_create_and_add(SYSFS_NAME, kernel_kobj);
+	if (!eudyptula_kobject) {
 		pr_debug("Failed to create kobject for %s\n", SYSFS_NAME);
 		return -ENOMEM;
 	}
 
-	ret = sysfs_create_group(sysfs-lkm_kobject, &attr_group);
+	ret = sysfs_create_group(eudyptula_kobject, &attr_group);
 	if (ret) {
-		kobject_put(sysfs-lkm_kobject);
+		kobject_put(eudyptula_kobject);
 		return ret;
 	}
 
@@ -153,11 +128,11 @@ static int __init sysfs-lkm_sysfs_init(void)
 	return 0;
 }
 
-static void sysfs-lkm_sysfs_exit(void)
+static void eudyptula_sysfs_exit(void)
 {
-	kobject_put(sysfs-lkm_kobject);
-	pr_debug("%s: Exiting\n", DRV_NAME);
+	kobject_put(eudyptula_kobject);
+	pr_debug("----Eudyptula task 09 challenge: END----\n");
 }
 
-module_init(sysfs-lkm_sysfs_init);
-module_exit(sysfs-lkm_sysfs_exit);
+module_init(eudyptula_sysfs_init);
+module_exit(eudyptula_sysfs_exit);
