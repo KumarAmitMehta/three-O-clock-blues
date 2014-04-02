@@ -1,5 +1,5 @@
-obj-m := debugfs.o
-CFLAGS_debugfs.o := -DDEBUG
+obj-m := debugfs_lkm.o
+CFLAGS_debugfs_lkm.o := -DDEBUG
 
 KERNEL_DIR ?= /lib/modules/$(shell uname -r)/build
 modules:
