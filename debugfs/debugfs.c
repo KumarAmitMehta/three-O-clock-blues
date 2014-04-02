@@ -13,20 +13,17 @@ MODULE_AUTHOR("gmate.amit@gmail.com");
 MODULE_VERSION("1.0");
 MODULE_DESCRIPTION("sample module showing debugfs usage");
 
-#define RWUSR (S_IRUSR|S_IWUSR)
-#define RWGRP (S_IRGRP|S_IWGRP)
-#define RWOTH (S_IROTH|S_IWOTH)
-
 /* Name of the directory entry in debugfs file system */
-#define DEBUGFS_NAME "debugfs-lkm"
-/* debugfs-lkm directory entry */
+#define DEBUGFS_NAME "debugfs_lkm"
+#define DRV_NAME "debugfs_lkm"
+/* debugfs_lkm directory entry */
 static struct dentry *dfs_eud_entry;
 
-/* Debugfs debugfs-lkm/id file node read/write buffer */
+/* Debugfs debugfs_lkm/id file node read/write buffer */
 static const char text[] = "bitprolix";
 static int len = sizeof(text);
 
-/* Debugfs debugfs-lkm/foo file node read/write buffer */
+/* Debugfs debugfs_lkm/foo file node read/write buffer */
 static char foo_kbuff[PAGE_SIZE];
 
 /* For foo debugfs file node read/write synchronization */
@@ -152,11 +149,11 @@ static const struct file_operations debugfs_eud_foo_fs_ops = {
 	.write = foo_write,
 };
 
-static int __init debugfs-lkm_debug_fs_init(void)
+static int __init debugfs_lkm_debug_fs_init(void)
 {
-	pr_debug("%s Init\n", __FUNCTION__);
+	pr_debug("%s Init\n", DRV_NAME);
 
-	dfs_eud_entry = debugfs_create_dir("debugfs-lkm", NULL);
+	dfs_eud_entry = debugfs_create_dir("debugfs_lkm", NULL);
 	if (!dfs_eud_entry) {
 		pr_debug("Failed to create subdirectory in debugFS\n");
 		return -ENODEV;
@@ -166,7 +163,7 @@ static int __init debugfs-lkm_debug_fs_init(void)
 	sema_init(&sem, 1);
 
 	/* id */
-	if (!debugfs_create_file("id", RWUSR|RWGRP|RWOTH,
+	if (!debugfs_create_file("id", 0666,
 				dfs_eud_entry, NULL, &debugfs_eud_id_fs_ops)) {
 		pr_debug("Failed to create id node\n");
 		return -ENODEV;
@@ -191,12 +188,12 @@ static int __init debugfs-lkm_debug_fs_init(void)
 	return 0;
 }
 
-static void debugfs-lkm_debug_fs_exit(void)
+static void debugfs_lkm_debug_fs_exit(void)
 {
 	debugfs_remove_recursive(dfs_eud_entry);
 
-	pr_debug("%s: Exiting\n", __FUNCTION__);
+	pr_debug("%s: Exiting\n", DRV_NAME);
 }
 
-module_init(debugfs-lkm_debug_fs_init);
-module_exit(debugfs-lkm_debug_fs_exit);
+module_init(debugfs_lkm_debug_fs_init);
+module_exit(debugfs_lkm_debug_fs_exit);
