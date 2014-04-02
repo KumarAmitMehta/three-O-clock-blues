@@ -117,14 +117,14 @@ static int __init sysfs_lkm_sysfs_init(void)
 		return -ENOMEM;
 	}
 
+	/* Files go online as soon they are created */
+	sema_init(&sem, 1);
+
 	ret = sysfs_create_group(sysfs_lkm_kobject, &attr_group);
 	if (ret) {
 		kobject_put(sysfs_lkm_kobject);
 		return ret;
 	}
-
-	/* initialize locking mechanism for foo */
-	sema_init(&sem, 1);
 
 	return 0;
 }
