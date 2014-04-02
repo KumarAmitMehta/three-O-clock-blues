@@ -12,12 +12,12 @@ MODULE_LICENSE("GPL v2");
 MODULE_AUTHOR("gmate.amit@gmail.com");
 MODULE_VERSION("1.0");
 MODULE_DESCRIPTION("misc char driver");
-#define DRV_NAME "misc-char-lkm"
+#define DRV_NAME "misc_char_lkm"
 
 static const char text[] = "bitprolix";
 static int len = sizeof(text);
 
-static ssize_t misc-char-lkm_read(struct file *filp, char __user *buf,
+static ssize_t misc_char_lkm_read(struct file *filp, char __user *buf,
 		size_t count, loff_t *f_ops)
 {
 	/* file offset past the text */
@@ -38,16 +38,15 @@ static ssize_t misc-char-lkm_read(struct file *filp, char __user *buf,
 	return count;
 }
 
-static ssize_t misc-char-lkm_write(struct file *filp, const char __user *buf,
+static ssize_t misc_char_lkm_write(struct file *filp, const char __user *buf,
 		size_t count, loff_t *f_ops)
 {
 	int max, bytes_to_write;
 
 	char *kbuff = kmalloc(len, GFP_KERNEL);
-	if (!kbuff) {
-		pr_debug("Failed to allocate memory\n");
+	if (!kbuff)
 		return -ENOMEM;
-	}
+
 	max = len - *f_ops;
 
 	if (max > count)
@@ -72,38 +71,40 @@ static ssize_t misc-char-lkm_write(struct file *filp, const char __user *buf,
 	return count;
 }
 
-static const struct file_operations misc-char-lkm_fops = {
-	.read = misc-char-lkm_read,
-	.write = misc-char-lkm_write,
+static const struct file_operations misc_char_lkm_fops = {
+	.read = misc_char_lkm_read,
+	.write = misc_char_lkm_write,
 };
 
-static struct miscdevice misc-char-lkm_misc_device = {
+static struct miscdevice misc_char_lkm_misc_device = {
 	.minor = MISC_DYNAMIC_MINOR,
 	.name = DRV_NAME,
-	.fops = &misc-char-lkm_fops
+	.fops = &misc_char_lkm_fops
 };
 
-static int __init misc-char-lkm_init(void)
+static int __init misc_char_lkm_init(void)
 {
 	int ret;
 
-	ret = misc_register(&misc-char-lkm_misc_device);
+	pr_debug("%s: Init\n", DRV_NAME);
+	ret = misc_register(&misc_char_lkm_misc_device);
 	if (ret) {
 		pr_debug("Failed to register misc-char-lkm char driver\n");
 		return ret;
 	}
 
 	pr_debug("Registered /dev/%s with major: %d and minor: %d\n",
-		DRV_NAME, MISC_MAJOR, misc-char-lkm_misc_device.minor);
+		DRV_NAME, MISC_MAJOR, misc_char_lkm_misc_device.minor);
 
 	return 0;
 }
 
-static void misc-char-lkm_exit(void)
+static void misc_char_lkm_exit(void)
 {
-	misc_deregister(&misc-char-lkm_misc_device);
+	misc_deregister(&misc_char_lkm_misc_device);
 	pr_debug("Removed /dev/%s file node!!!\n", DRV_NAME);
+	pr_debug("%s: Exiting\n", DRV_NAME);
 }
 
-module_init(misc-char-lkm_init);
-module_exit(misc-char-lkm_exit);
+module_init(misc_char_lkm_init);
+module_exit(misc_char_lkm_exit);
