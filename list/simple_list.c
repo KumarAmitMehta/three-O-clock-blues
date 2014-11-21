@@ -41,9 +41,11 @@ static struct identity *superhero_find(int id)
 {
 	struct identity *p;
 
-	list_for_each_entry(p, &superhero_list, id_list) {
-		if (p->id == id)
-			return p;
+	if (!list_empty(&superhero_list)) {
+		list_for_each_entry(p, &superhero_list, id_list) {
+			if (p->id == id)
+				return p;
+		}
 	}
 
 	return NULL;
@@ -53,15 +55,17 @@ static void superhero_destroy(int id)
 {
 	struct identity *p;
 
-	list_for_each_entry(p, &superhero_list, id_list) {
-		if (p->id == id) {
-			list_del(&p->id_list);
-			kfree(p);
-			break;
+	if (!list_empty(&superhero_list)) {
+		list_for_each_entry(p, &superhero_list, id_list) {
+			if (p->id == id) {
+				list_del(&p->id_list);
+				kfree(p);
+				break;
+			}
 		}
 	}
-
 }
+
 static int my_init(void)
 {
 	struct identity *temp;
@@ -73,19 +77,21 @@ static int my_init(void)
 	superhero_create("Batman", 3);
 	superhero_create("Sherlock", 10);
 
-	// Spiderman, are you still there?
+	/* Spiderman, are you still there? */
 	temp = superhero_find(2);
-	pr_debug("id 2 = %s\n", temp->name);
+	pr_debug("Superhero #2 is %s\n", temp->name);
 
 	temp = superhero_find(42);
 	if (temp == NULL)
-		pr_debug("id 42 not found\n");
+		pr_debug("Superhero #42 not found...\n");
 
-	// Aah! Me the mIghty
+	/* Aah! Me the mIghty */
 	superhero_destroy(2);
 	superhero_destroy(1);
 	superhero_destroy(3);
 	superhero_destroy(10);
+
+	/* Negative test */
 	superhero_destroy(42);
 	superhero_destroy(10);
 
