@@ -53,10 +53,10 @@ static struct identity *superhero_find(int id)
 
 static void superhero_destroy(int id)
 {
-	struct identity *p;
+	struct identity *p, *q;
 
 	if (!list_empty(&superhero_list)) {
-		list_for_each_entry(p, &superhero_list, id_list) {
+		list_for_each_entry_safe(p, q, &superhero_list, id_list) {
 			if (p->id == id) {
 				list_del(&p->id_list);
 				kfree(p);
