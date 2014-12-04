@@ -74,7 +74,7 @@ static int my_init(void)
 	fp = &identity_ctor;
 	identity_cachep = kmem_cache_create("superhero_cache",
 				sizeof(struct identity),
-				0, SLAB_HWCACHE_ALIGN, fp);
+				0, 0, fp);
 	if (!identity_cachep)
 		return -ENOMEM;
 
