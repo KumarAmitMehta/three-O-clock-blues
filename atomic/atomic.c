@@ -23,15 +23,15 @@ static int __init hello_init(void)
 	int i;
 	pr_debug("Start counting...!\n");
 
-	for (i = 0; i < 10; ++i) 
+	for (i = 0; i < 600000; ++i) 
 		inc_count();
 
+	pr_debug("counter value after incrementing: %ld\n", read_count());
 	return 0;
 }
 
 static void hello_exit(void)
 {
-	pr_debug("counter value at exit: %ld\n", read_count());
 }
 
 module_init(hello_init);
