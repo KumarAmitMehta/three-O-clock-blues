@@ -1,4 +1,4 @@
-SUBDIRS = cache 
+SUBDIRS = cache vmalloc 
 
 all: subdirs
 
