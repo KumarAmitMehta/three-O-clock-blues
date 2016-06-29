@@ -5,6 +5,7 @@
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("gmate.amit@gmail.com");
+MODULE_DESCRIPTION("An example on per-cpu variable");
 
 static DEFINE_PER_CPU(long, counter);
 

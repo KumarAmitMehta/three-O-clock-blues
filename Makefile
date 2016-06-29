@@ -1,5 +1,5 @@
 SUBDIRS =  debugfs hello_world list misc-char mm queue rwlock spinlock 	\
-	   sysfs atomic percpu timers
+	   sysfs atomic percpu timers cpu
 
 all: subdirs
 
