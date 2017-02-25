@@ -8,8 +8,9 @@
 #include <linux/kfifo.h>
 #include <linux/slab.h>
 
-MODULE_LICENSE("GPL");
+MODULE_LICENSE("GPL v2");
 MODULE_AUTHOR("Kumar Amit Mehta");
+MODULE_DESCRIPTION("Exercise FIFO implementation in kernel");
 
 struct identity {
 	char name[20];
