@@ -8,4 +8,5 @@ Module.symvers
 *.mod.c
 modules.order
 cscope.files
+cscope.out
 tags
